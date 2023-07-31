@@ -64,6 +64,14 @@ void print_results(const char* const tag, std::vector<int>::iterator result, con
         in_array.front(), in_array.back(), duration_cast<duration<double, milli>>(endTime - startTime).count());
 }
 
+void print_results(const char* const tag, size_t result, const vector<int>& in_array,
+    high_resolution_clock::time_point startTime,
+    high_resolution_clock::time_point endTime)
+{
+    printf("%s: size = %zu  Result: %zu  Lowest: %d  Highest: %d  Time: %fms\n", tag, in_array.size(), result,
+        in_array.front(), in_array.back(), duration_cast<duration<double, milli>>(endTime - startTime).count());
+}
+
 void print_results(const char* const tag, const vector<long long>& in_array,
     high_resolution_clock::time_point startTime,
     high_resolution_clock::time_point endTime)
@@ -1341,9 +1349,13 @@ void copy_benchmark(size_t array_size, int num_times)
 
     printf("\n\n");
 
-    for (auto& d : data_int_src) {
-        d = static_cast<int>(rd());
+    for (size_t i = 0; i < array_size; i++)
+    {
+        data_int_src[i] = i;
     }
+    //for (auto& d : data_int_src) {
+    //    d = static_cast<int>(rd());
+    //}
 
     printf("\n\n");
 
@@ -1378,7 +1390,7 @@ void copy_benchmark(size_t array_size, int num_times)
         startTime = high_resolution_clock::now();
         copy(std::execution::par_unseq, data_int_src.begin(), data_int_src.end(), data_int_dst.begin());
         endTime = high_resolution_clock::now();
-        print_results("Parallel SIMD std::merge", data_int_dst, startTime, endTime);
+        print_results("Parallel SIMD std::copy", data_int_dst, startTime, endTime);
     }
 
     // dpl::stable_sort benchmarks
@@ -1510,49 +1522,53 @@ void equal_benchmark(size_t array_size, int num_times)
 void count_benchmark(size_t array_size, size_t num_times)
 {
     std::vector<int>       data_int_src(array_size);
-    std::vector<size_t>    num_items(1, 0);
+    size_t                 num_items;
     high_resolution_clock::time_point startTime, endTime;
 
     random_device rd;
 
     printf("\n\n");
 
-    for (auto& d : data_int_src) {
-        d = static_cast<int>(rd());
+    for (size_t i = 0; i < array_size; i++)
+    {
+        data_int_src[i] = i;
     }
+    //for (auto& d : data_int_src) {
+    //    d = static_cast<int>(rd());
+    //}
 
     // std::count benchmarks
 
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] = count(std::execution::seq, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(std::execution::seq, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Serial std::count", data_int_src, startTime, endTime);
+        print_results("Serial std::count", num_items, data_int_src, startTime, endTime);
     }
 #ifndef MICROSOFT_ALGORITHMS
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] = count(std::execution::unseq, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(std::execution::unseq, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Serial SIMD std::count", data_int_src, startTime, endTime);
+        print_results("Serial SIMD std::count", num_items, data_int_src, startTime, endTime);
     }
 #endif
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] += count(std::execution::par, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(std::execution::par, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Parallel std::count", data_int_src, startTime, endTime);
+        print_results("Parallel std::count", num_items, data_int_src, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] += count(std::execution::par_unseq, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(std::execution::par_unseq, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Parallel SIMD std::count", data_int_src, startTime, endTime);
+        print_results("Parallel SIMD std::count", num_items, data_int_src, startTime, endTime);
     }
 
     // dpl::count benchmarks
@@ -1561,33 +1577,33 @@ void count_benchmark(size_t array_size, size_t num_times)
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] += count(oneapi::dpl::execution::seq, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(oneapi::dpl::execution::seq, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Serial dpl::count", data_int_src, startTime, endTime);
+        print_results("Serial dpl::count", num_items, data_int_src, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] += count(oneapi::dpl::execution::unseq, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(oneapi::dpl::execution::unseq, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("SIMD dpl::count", data_int_src, startTime, endTime);
+        print_results("SIMD dpl::count", num_items, data_int_src, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] += count(oneapi::dpl::execution::par, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(oneapi::dpl::execution::par, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Parallel dpl::count", data_int_src, startTime, endTime);
+        print_results("Parallel dpl::count", num_items, data_int_src, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
         startTime = high_resolution_clock::now();
-        num_items[0] += count(oneapi::dpl::execution::par_unseq, data_int_src.begin(), data_int_src.end(), 42);
+        num_items = count(oneapi::dpl::execution::par_unseq, data_int_src.begin(), data_int_src.end(), 42);
         endTime = high_resolution_clock::now();
-        print_results("Parallel SIMD dpl::count", data_int_src, startTime, endTime);
+        print_results("Parallel SIMD dpl::count", num_items, data_int_src, startTime, endTime);
     }
 
 #endif
@@ -1696,9 +1712,13 @@ void adjacent_difference_benchmark(size_t array_size, size_t num_times)
 
     printf("\nAdjacent Difference\n");
 
-    for (auto& d : data_int_src) {
-        d = static_cast<int>(rd());
+    for (size_t i = 0; i < array_size; i++)
+    {
+        data_int_src[i] = i;
     }
+    //for (auto& d : data_int_src) {
+    //    d = static_cast<int>(rd());
+    //}
 
     // std::adjacent_difference benchmarks
     printf("Benchmarks:\n");
@@ -1783,9 +1803,13 @@ void max_element_benchmark(size_t array_size, size_t num_times)
 
     printf("\n\n");
 
-    for (auto& d : data_int_src) {
-        d = static_cast<int>(rd());
+    for (size_t i = 0; i < array_size; i++)
+    {
+        data_int_src[i] = i;
     }
+    //for (auto& d : data_int_src) {
+    //    d = static_cast<int>(rd());
+    //}
 #if 1
     // std::max_element benchmarks
 
@@ -1863,7 +1887,7 @@ void max_element_benchmark(size_t array_size, size_t num_times)
 int main()
 {
     size_t array_size = 100000000;
-    size_t number_of_tests = 2;
+    size_t number_of_tests = 5;
 
     max_element_benchmark(        array_size, number_of_tests);   // for small arrays parallel implementation is much slower than serial
     adjacent_difference_benchmark(array_size, number_of_tests);   // for small arrays parallel implementation is much slower than serial
@@ -1875,11 +1899,11 @@ int main()
     equal_benchmark(              array_size, number_of_tests);
     copy_benchmark(               array_size, number_of_tests);
     //copy_benchmark(                   10000, 10);   // for small arrays parallel implementation is much slower than serial
+    fill_benchmark(array_size, number_of_tests);
     merge_benchmark(              array_size, number_of_tests);
     inplace_merge_benchmark(      array_size, number_of_tests);
     //merge_dual_buffer_benchmark(  100000000, 10);
     //merge_single_buffer_benchmark(    10000, 10);
-    fill_benchmark(               array_size, number_of_tests);
     //fill_long_long_benchmark(     100000000, 10);
     sort_benchmark(               array_size, number_of_tests);
     //sort_doubles_benchmark(         100000000, 10, true );
