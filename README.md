@@ -19,7 +19,7 @@ sudo apt install libtbb-dev
 
 To build, use g++ command and not gcc. The order of the following arguments matters!
 ```
-g++ main.cpp -ltbb -std=c++17 -O3 -o benchmark_tbb
+g++ /mnt/c/repos/ParallelSTL/benchmarks/src/main.cpp -ltbb -std=c++17 -O3 -o benchmark_tbb
 ```
 
 
@@ -27,7 +27,7 @@ g++ main.cpp -ltbb -std=c++17 -O3 -o benchmark_tbb
 To setup NVidia's compiler on Linux
 https://developer.nvidia.com/blog/accelerating-standard-c-with-gpus-using-stdpar/
 
-To compile Benchmark using NVidia's compiler
+To compile Benchmark using NVidia's compiler targetting Intel multicore CPU
 nvc++ main.cpp -stdpar=multicore -O3 -o benchmark_nvc
 
 To setup NVidia's compiler and C++ Standard parallel algorithms on Linux
