@@ -76,7 +76,7 @@ void print_results(const char* const tag, const vector<long long>& in_array,
     high_resolution_clock::time_point startTime,
     high_resolution_clock::time_point endTime)
 {
-    printf("%s: size = %zu  Lowest: %d Highest: %d Time: %fms\n", tag, in_array.size(), in_array.front(), in_array.back(),
+    printf("%s: size = %zu  Lowest: %lld Highest: %lld Time: %fms\n", tag, in_array.size(), in_array.front(), in_array.back(),
         duration_cast<duration<double, milli>>(endTime - startTime).count());
 }
 
@@ -92,7 +92,7 @@ void print_results(const char* const tag, const vector<size_t>& in_array,
     high_resolution_clock::time_point startTime,
     high_resolution_clock::time_point endTime)
 {
-    printf("%s: size = %zu  %p  Lowest: %d Highest: %d Time: %fms\n", tag, in_array.size(), in_array.data(), in_array.front(), in_array.back(),
+    printf("%s: size = %zu  %p  Lowest: %zu Highest: %zu Time: %fms\n", tag, in_array.size(), in_array.data(), in_array.front(), in_array.back(),
         duration_cast<duration<double, milli>>(endTime - startTime).count());
 }
 
