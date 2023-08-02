@@ -36,5 +36,5 @@ sudo apt-get install -y nvhpc-23-5
 
 To compile Benchmark using NVidia's compiler targetting Intel multicore CPU
 ```
-nvc++ main.cpp -stdpar=multicore -O3 -o benchmark_nvc
+nvc++ /mnt/c/repos/ParallelSTL/benchmarks/src/main.cpp -stdpar=multicore -O3 -o benchmark_nvc
 ```
