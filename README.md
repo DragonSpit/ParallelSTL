@@ -19,7 +19,7 @@ sudo apt install libtbb-dev
 
 To build, use g++ command and not gcc. The order of the following arguments matters!
 ```
-g++ /mnt/c/repos/ParallelSTL/src/main.cpp -ltbb -std=c++17 -O3 -o benchmark_tbb
+g++ /mnt/c/repos/ParallelSTL/src/main.cpp -ltbb -std=c++17 -O3 -o benchmark_std
 ```
 
 ## Building NVidia's Parallel STL on Ubuntu 20.04 Linux (or WSL on Windows)
