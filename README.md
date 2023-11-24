@@ -41,8 +41,8 @@ nvc++ /mnt/c/repos/ParallelSTL/src/main.cpp -stdpar=multicore -O3 -o benchmark_n
 ## Building on Windows
 In Windows/ParallelSTL sub-directory a Visual Studio 2022 solution/project can be used to build an executable using either Microsoft's compiler or Intel compiler.
 Microsoft implements Parallel standard algorithms, but not all of them.
-Intel implements more standard parallel algorithms with higher performance (https://duvanenko.tech.blog/2023/05/21/c-parallel-stl-benchmark/)
-Intel OneAPI must be installed (https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html). If Intel implementations are not desired, then comment out "#define DPL_ALGORITHMS" at the top of "main.cpp".
+Intel implements more standard parallel algorithms with higher performance as show in [this blog](https://duvanenko.tech.blog/2023/05/21/c-parallel-stl-benchmark/)
+[Intel OneAPI](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html) must be installed . If Intel implementations are not desired, then comment out "#define DPL_ALGORITHMS" at the top of "main.cpp".
 
 Both compilers (Microsoft or Intel) can be used to build this project. To switch between compilers, select "Project/Intel-Compiler" from Visual Studio 2022 menu.
 
