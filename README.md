@@ -45,3 +45,8 @@ Intel implements more standard parallel algorithms with higher performance (http
 Intel OneAPI must be installed (https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html). If Intel implementations are not desired, then comment out "#define DPL_ALGORITHMS" at the top of "main.cpp".
 
 Both compilers (Microsoft or Intel) can be used to build this project. To switch between compilers, select "Project/Intel-Compiler" from Visual Studio 2022 menu.
+
+## Resources to Develop Your Own Parallel Algorithms
+The following book provides instructions and a free code repository for developing your own parallel algorithms:
+
+[Practical Parallel Algorithms in C++ and C#: Part 1: Sorting on Multicore CPUs](https://www.amazon.com/Practical-Parallel-Algorithms-Sorting-Multicore-ebook/dp/B0C3TZPRKZ/ref=sr_1_2?crid=2WH4J28ICJ1DV&keywords=duvanenko&qid=1700855661&sprefix=duvanenko%2Caps%2C103&sr=8-2)
