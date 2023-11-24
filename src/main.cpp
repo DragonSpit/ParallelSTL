@@ -11,8 +11,10 @@
 // TODO: Make sure to page-in the buffer, even for fill, before benchmarking. Didn't seem to make much difference on my laptop
 // Conclusion: Not all parallel algorithms are advantageous when arrays fit into cache, with serial algorithms outperforming the parallel on first few runs only for some.
 
-//#define DPL_ALGORITHMS          // Includes Intel's OneAPI parallel algorithm implementations
-//#define MICROSOFT_ALGORITHMS    // Excludes single-core SIMD implementations, which Microsoft does not support
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+  #define DPL_ALGORITHMS          // Includes Intel's OneAPI parallel algorithm implementations
+  #define MICROSOFT_ALGORITHMS    // Excludes single-core SIMD implementations, which Microsoft does not support
+#endif
 
 #ifdef DPL_ALGORITHMS
 // oneDPL headers should be included before standard headers
@@ -306,21 +308,26 @@ void sort_benchmark(size_t array_size, size_t num_times)
     //std::cout << "Size of int: " << sizeof(int) << std::endl;
     printf("\n\n");
 
-    std::vector<int>       data(array_size);
+    std::vector<int>       data(     array_size);
+    std::vector<int>       data_copy(array_size);
 
     high_resolution_clock::time_point startTime, endTime;
     random_device rd;
+    std::mt19937_64 dist(1234);
+
+    for (auto& d : data) {
+        //d = static_cast<int>(rd());
+        d = static_cast<int>(dist());   // way faster on Linux
+    }
 
     // std::sort benchmarks
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(std::execution::seq, data.begin(), data.end());
+        sort(std::execution::seq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial std::sort", data, startTime, endTime);
     }
@@ -328,12 +335,10 @@ void sort_benchmark(size_t array_size, size_t num_times)
 #ifndef MICROSOFT_ALGORITHMS
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(std::execution::unseq, data.begin(), data.end());
+        sort(std::execution::unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial SIMD std::sort", data, startTime, endTime);
     }
@@ -341,24 +346,20 @@ void sort_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(std::execution::par, data.begin(), data.end());
+        sort(std::execution::par, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel std::sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(std::execution::par_unseq, data.begin(), data.end());
+        sort(std::execution::par_unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel SIMD std::sort", data, startTime, endTime);
     }
@@ -368,48 +369,40 @@ void sort_benchmark(size_t array_size, size_t num_times)
 #ifdef DPL_ALGORITHMS
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(oneapi::dpl::execution::seq, data.begin(), data.end());
+        sort(oneapi::dpl::execution::seq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial dpl::sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(oneapi::dpl::execution::unseq, data.begin(), data.end());
+        sort(oneapi::dpl::execution::unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("SIMD dpl::sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(oneapi::dpl::execution::par, data.begin(), data.end());
+        sort(oneapi::dpl::execution::par, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel dpl::sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
         startTime = high_resolution_clock::now();
-        sort(oneapi::dpl::execution::par_unseq, data.begin(), data.end());
+        sort(oneapi::dpl::execution::par_unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel SIMD dpl::sort", data, startTime, endTime);
     }
@@ -624,51 +617,55 @@ void sort_doubles_benchmark(size_t array_size, int num_times, bool reuse_array)
 void stable_sort_benchmark(size_t array_size, size_t num_times)
 {
     vector<int> data(array_size);
+    vector<int> data_copy(array_size);
     high_resolution_clock::time_point startTime, endTime;
     random_device rd;
+    std::mt19937_64 dist(1234);
+
+    for (auto& d : data) {
+        //d = static_cast<int>(rd());
+        d = static_cast<int>(dist());   // way faster on Linux
+    }
 
     // std::stable_sort benchmarks
+    printf("\n\n");
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(std::execution::seq, data.begin(), data.end());
+        stable_sort(std::execution::seq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial std::stable_sort", data, startTime, endTime);
     }
 #ifndef MICROSOFT_ALGORITHMS
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(std::execution::unseq, data.begin(), data.end());
+        stable_sort(std::execution::unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial SIMD std::stable_sort", data, startTime, endTime);
     }
 #endif
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(std::execution::par, data.begin(), data.end());
+        stable_sort(std::execution::par, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel std::stable_sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(std::execution::par_unseq, data.begin(), data.end());
+        stable_sort(std::execution::par_unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel SIMD std::stable_sort", data, startTime, endTime);
     }
@@ -678,45 +675,40 @@ void stable_sort_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
 
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
         startTime = high_resolution_clock::now();
-        stable_sort(oneapi::dpl::execution::seq, data.begin(), data.end());
+        stable_sort(oneapi::dpl::execution::seq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial dpl::stable_sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(oneapi::dpl::execution::unseq, data.begin(), data.end());
+        stable_sort(oneapi::dpl::execution::unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("SIMD dpl::stable_sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(oneapi::dpl::execution::par, data.begin(), data.end());
+        stable_sort(oneapi::dpl::execution::par, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel dpl::stable_sort", data, startTime, endTime);
     }
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data.begin(), data.end(), data_copy.begin());
+
         startTime = high_resolution_clock::now();
-        stable_sort(oneapi::dpl::execution::par_unseq, data.begin(), data.end());
+        stable_sort(oneapi::dpl::execution::par_unseq, data_copy.begin(), data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel SIMD dpl::stable_sort", data, startTime, endTime);
     }
@@ -731,14 +723,17 @@ void merge_benchmark(size_t array_size, size_t num_times)
     high_resolution_clock::time_point startTime, endTime;
 
     random_device rd;
+    mt19937_64 dist(1234);
 
     printf("\n\n");
 
     for (auto& d : data_int_src_0) {
-        d = static_cast<int>(rd());
+        //d = static_cast<int>(rd());
+        d = static_cast<int>(dist());   // way faster on Linux
     }
     for (auto& d : data_int_src_1) {
-        d = static_cast<int>(rd());
+        //d = static_cast<int>(rd());
+        d = static_cast<int>(dist());   // way faster on Linux
     }
 
     sort(std::execution::par, data_int_src_0.begin(), data_int_src_0.end());
@@ -818,10 +813,17 @@ void merge_benchmark(size_t array_size, size_t num_times)
 
 void inplace_merge_benchmark(size_t array_size, size_t num_times)
 {
-    std::vector<int> data_int(array_size * 2);
+    std::vector<int> data_int( array_size * 2);
+    std::vector<int> data_copy(array_size * 2);
     high_resolution_clock::time_point startTime, endTime;
 
     random_device rd;
+    mt19937_64 dist(1234);
+
+    for (auto& d : data_int) {
+        //d = static_cast<int>(rd());
+        d = static_cast<int>(dist());   // way faster on Linux
+    }
 
     printf("\n\n");
 
@@ -829,12 +831,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(std::execution::seq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -844,12 +844,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 #ifndef MICROSOFT_ALGORITHMS
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(std::execution::unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -859,12 +857,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 #endif
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -874,12 +870,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(std::execution::par_unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -892,12 +886,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(oneapi::dpl::execution::seq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -907,12 +899,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(oneapi::dpl::execution::unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -922,12 +912,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(oneapi::dpl::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -937,12 +925,10 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
 
     for (size_t i = 0; i < num_times; i++)
     {
-        for (auto& d : data_int) {
-            d = static_cast<int>(rd());
-        }
+        copy(std::execution::par, data_int.begin(), data_int.end(), data_copy.begin());
 
-        sort(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2);  // left  half
-        sort(std::execution::par, data_int.begin() + data_int.size() / 2, data_int.end());    // right half
+        sort(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2);  // left  half
+        sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
         inplace_merge(oneapi::dpl::execution::par_unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
@@ -1443,8 +1429,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(std::execution::seq, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("Serial std::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("Serial std::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 #ifndef MICROSOFT_ALGORITHMS
     for (size_t i = 0; i < num_times; i++)
@@ -1461,8 +1449,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(std::execution::par, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("Parallel std::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("Parallel std::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 
     for (size_t i = 0; i < num_times; i++)
@@ -1470,8 +1460,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(std::execution::par_unseq, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("Parallel SIMD std::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("Parallel SIMD std::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 
     // dpl::stable_sort benchmarks
@@ -1482,8 +1474,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(oneapi::dpl::execution::seq, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("Serial dpl::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("Serial dpl::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 
     for (size_t i = 0; i < num_times; i++)
@@ -1491,8 +1485,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(oneapi::dpl::execution::unseq, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("SIMD dpl::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("SIMD dpl::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 
     for (size_t i = 0; i < num_times; i++)
@@ -1500,8 +1496,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(oneapi::dpl::execution::par, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("Parallel dpl::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("Parallel dpl::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 
     for (size_t i = 0; i < num_times; i++)
@@ -1509,8 +1507,10 @@ void equal_benchmark(size_t array_size, size_t num_times)
         startTime = high_resolution_clock::now();
         bool equals = equal(oneapi::dpl::execution::par_unseq, data_int_src_0.begin(), data_int_src_0.end(), data_int_src_1.begin());
         endTime = high_resolution_clock::now();
-        if (equals) printf("Arrays are equal\n");
-        print_results("Parallel SIMD dpl::equal", data_int_src_0, startTime, endTime);
+        if (equals)
+            print_results("Parallel SIMD dpl::equal", data_int_src_0, startTime, endTime);
+        else
+            exit(1);
     }
 #endif
 }
@@ -1883,7 +1883,7 @@ void max_element_benchmark(size_t array_size, size_t num_times)
 
 int main()
 {
-    size_t array_size = 100000000;
+    size_t array_size = 100'000'000;
     size_t number_of_tests = 5;
 
     max_element_benchmark(        array_size, number_of_tests);   // for small arrays parallel implementation is much slower than serial
