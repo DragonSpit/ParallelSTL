@@ -1,9 +1,9 @@
 # ParallelSTL
-C++ Parallel STL Benchmarks and Other Developments
+Benchmark of C++ Parallel Standard Library Algorithms (STL)
 
 To setup Intel's C++ Standard Parallel Algorithms on Linux, the following are needed:
-- OneAPI
-- Threading Building Blocks (TBB)
+- (Windows) OneAPI
+- (Linux)   Threading Building Blocks (TBB)
 
 ## Building on Ubuntu 20.04 Linux (or WSL on Windows)
 To install g++ which supports C++17:
@@ -38,3 +38,10 @@ To compile Benchmark using NVidia's compiler targetting Intel multicore CPU
 ```
 nvc++ /mnt/c/repos/ParallelSTL/src/main.cpp -stdpar=multicore -O3 -o benchmark_nvc
 ```
+## Building on Windows
+In Windows/ParallelSTL sub-directory a Visual Studio 2022 solution/project can be used to build an executable using either Microsoft's compiler or Intel compiler.
+Microsoft implements Parallel standard algorithms, but not all of them.
+Intel implements more standard parallel algorithms with higher performance (https://duvanenko.tech.blog/2023/05/21/c-parallel-stl-benchmark/)
+Intel OneAPI must be installed (https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html). If Intel implementations are not desired, then comment out "#define DPL_ALGORITHMS" at the top of "main.cpp".
+
+Both compilers (Microsoft or Intel) can be used to build this project. To switch between compilers, select "Project/Intel-Compiler" from Visual Studio 2022 menu.
