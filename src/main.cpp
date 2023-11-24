@@ -11,8 +11,8 @@
 // TODO: Make sure to page-in the buffer, even for fill, before benchmarking. Didn't seem to make much difference on my laptop
 // Conclusion: Not all parallel algorithms are advantageous when arrays fit into cache, with serial algorithms outperforming the parallel on first few runs only for some.
 
-#define DPL_ALGORITHMS
-#define MICROSOFT_ALGORITHMS
+#define DPL_ALGORITHMS          // Includes Intel's OneAPI parallel algorithm implementations
+#define MICROSOFT_ALGORITHMS    // Excludes single-core SIMD implementations, which Microsoft does not support
 
 #ifdef DPL_ALGORITHMS
 // oneDPL headers should be included before standard headers
