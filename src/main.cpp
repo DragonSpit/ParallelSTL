@@ -837,7 +837,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(std::execution::seq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(std::execution::seq, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial std::inplace_merge", data_int, startTime, endTime);
     }
@@ -850,7 +850,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(std::execution::unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(std::execution::unseq, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial SIMD std::inplace_merge", data_int, startTime, endTime);
     }
@@ -863,7 +863,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(std::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(std::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel std::inplace_merge", data_int, startTime, endTime);
     }
@@ -876,7 +876,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(std::execution::par_unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(std::execution::par_unseq, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel SIMD std::inplace_merge", data_int, startTime, endTime);
     }
@@ -892,7 +892,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(oneapi::dpl::execution::seq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(oneapi::dpl::execution::seq, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Serial dpl::inplace_merge", data_int, startTime, endTime);
     }
@@ -905,7 +905,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(oneapi::dpl::execution::unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(oneapi::dpl::execution::unseq, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("SIMD dpl::inplace_merge", data_int, startTime, endTime);
     }
@@ -918,7 +918,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(oneapi::dpl::execution::par, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(oneapi::dpl::execution::par, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel dpl::inplace_merge", data_int, startTime, endTime);
     }
@@ -931,7 +931,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
         sort(std::execution::par, data_copy.begin() + data_copy.size() / 2, data_copy.end());    // right half
 
         startTime = high_resolution_clock::now();
-        inplace_merge(oneapi::dpl::execution::par_unseq, data_int.begin(), data_int.begin() + data_int.size() / 2, data_int.end());
+        inplace_merge(oneapi::dpl::execution::par_unseq, data_copy.begin(), data_copy.begin() + data_copy.size() / 2, data_copy.end());
         endTime = high_resolution_clock::now();
         print_results("Parallel SIMD dpl::inplace_merge", data_int, startTime, endTime);
     }
