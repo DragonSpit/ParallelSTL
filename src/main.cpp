@@ -312,7 +312,7 @@ void sort_benchmark(size_t array_size, size_t num_times)
     std::vector<int>       data_copy(array_size);
 
     high_resolution_clock::time_point startTime, endTime;
-    random_device rd;
+    //random_device rd;
     std::mt19937_64 dist(1234);
 
     for (auto& d : data) {
@@ -619,7 +619,7 @@ void stable_sort_benchmark(size_t array_size, size_t num_times)
     vector<int> data(array_size);
     vector<int> data_copy(array_size);
     high_resolution_clock::time_point startTime, endTime;
-    random_device rd;
+    //random_device rd;
     std::mt19937_64 dist(1234);
 
     for (auto& d : data) {
@@ -722,7 +722,7 @@ void merge_benchmark(size_t array_size, size_t num_times)
     std::vector<int>       data_int_dst(  2 * array_size, 1);   // initializate destination to page in and cache it
     high_resolution_clock::time_point startTime, endTime;
 
-    random_device rd;
+    //random_device rd;
     mt19937_64 dist(1234);
 
     printf("\n\n");
@@ -817,7 +817,7 @@ void inplace_merge_benchmark(size_t array_size, size_t num_times)
     std::vector<int> data_copy(array_size * 2);
     high_resolution_clock::time_point startTime, endTime;
 
-    random_device rd;
+    //random_device rd;
     mt19937_64 dist(1234);
 
     for (auto& d : data_int) {
@@ -1151,8 +1151,6 @@ void all_of_benchmark(size_t array_size, size_t num_times)
     std::vector<int> data_int(array_size, 2);
     high_resolution_clock::time_point startTime, endTime;
 
-    random_device rd;
-
     printf("\n\n");
 
     // std::inplace_merge benchmarks
@@ -1238,8 +1236,6 @@ void any_of_benchmark(size_t array_size, size_t num_times)
 {
     std::vector<int> data_int(array_size, 2);
     high_resolution_clock::time_point startTime, endTime;
-
-    random_device rd;
 
     printf("\n\n");
 
@@ -1327,8 +1323,6 @@ void copy_benchmark(size_t array_size, size_t num_times)
     std::vector<int>       data_int_src(array_size);
     std::vector<int>       data_int_dst(array_size);
     high_resolution_clock::time_point startTime, endTime;
-
-    random_device rd;
 
     printf("\n\n");
 
@@ -1522,8 +1516,6 @@ void count_benchmark(size_t array_size, size_t num_times)
     size_t                 num_items;
     high_resolution_clock::time_point startTime, endTime;
 
-    random_device rd;
-
     printf("\n\n");
 
     for (size_t i = 0; i < array_size; i++)
@@ -1610,8 +1602,6 @@ void adjacent_find_benchmark(size_t array_size, size_t num_times)
 {
     std::vector<int>       data_int(array_size, 2);
     high_resolution_clock::time_point startTime, endTime;
-
-    random_device rd;
 
     printf("\nAdjacent Find\n");
 
@@ -1705,8 +1695,6 @@ void adjacent_difference_benchmark(size_t array_size, size_t num_times)
     std::vector<int>       data_int_dst(array_size, 10);
     high_resolution_clock::time_point startTime, endTime;
 
-    random_device rd;
-
     printf("\nAdjacent Difference\n");
 
     for (size_t i = 0; i < array_size; i++)
@@ -1796,7 +1784,6 @@ void max_element_benchmark(size_t array_size, size_t num_times)
     std::vector<int>       data_int_src(array_size);
     high_resolution_clock::time_point startTime, endTime;
     std::vector<int>::iterator max_index;
-    random_device rd;
 
     printf("\n\n");
 
