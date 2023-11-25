@@ -48,10 +48,9 @@ Both compilers (Microsoft or Intel) can be used to build this project. To switch
 
 ## Additional Resources
 The following book provides examples, explanations, and a free code repository for developing your own parallel algorithms:
-
-[Practical Parallel Algorithms in C++ and C#: Part 1: Sorting on Multicore CPUs](https://www.amazon.com/Practical-Parallel-Algorithms-Sorting-Multicore-ebook/dp/B0C3TZPRKZ/ref=sr_1_2?crid=2WH4J28ICJ1DV&keywords=duvanenko&qid=1700855661&sprefix=duvanenko%2Caps%2C103&sr=8-2)
+- [Practical Parallel Algorithms in C++ and C#: Part 1: Sorting on Multicore CPUs](https://www.amazon.com/Practical-Parallel-Algorithms-Sorting-Multicore-ebook/dp/B0C3TZPRKZ/ref=sr_1_2?crid=2WH4J28ICJ1DV&keywords=duvanenko&qid=1700855661&sprefix=duvanenko%2Caps%2C103&sr=8-2)
 
 Related blogs to improve performance of C++ Standard Parallel Algorithms:
-[Sorting 19X Faster than C++ Parallel Sort](https://duvanenko.tech.blog/2023/10/29/sorting-19x-faster-than-c-parallel-sort/)
-[Can C++ Paralllel Standard Algorithms Accelerate, Even Small Arrays](https://duvanenko.tech.blog/2023/05/31/c-parallel-stl-performance-for-small-ish-arrays/)
-[Improving Parallel Performance for Small Arrays](https://duvanenko.tech.blog/2023/05/31/c-parallel-stl-performance-for-small-ish-arrays/)
+- [Sorting 19X Faster than C++ Parallel Sort](https://duvanenko.tech.blog/2023/10/29/sorting-19x-faster-than-c-parallel-sort/)
+- [Can C++ Paralllel Standard Algorithms Accelerate, Even Small Arrays](https://duvanenko.tech.blog/2023/05/31/c-parallel-stl-performance-for-small-ish-arrays/)
+- [Improving Parallel Performance for Small Arrays](https://duvanenko.tech.blog/2023/05/31/c-parallel-stl-performance-for-small-ish-arrays/)
