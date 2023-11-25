@@ -1,6 +1,7 @@
 // Additional reference besides oneapi/dpl/algorithm header itself: https://www.intel.com/content/www/us/en/developer/articles/guide/get-started-with-parallel-stl.html (this reference provides links for each standard algorithm manual page)
-// TODO: Figure out whose algorithm is std::sort (Microsoft's or Intel's) in the Intel environment versus Microsoft's environment - i.e. is it the same algorithm, but different allocator? Try running std::sort wihout dpl headers inclusion to see if performance is different.
-//       possibly add print statements into standard headers to figure out which algorithm is running. I.E. Is is a better algorithm or a better allocator that is making the difference? TBB versus PPL, and/or allocator, or compiler?
+// On Windows std::sort is Microsoft's when using Microsoft or Intel compilers.
+// On Linux   std::sort is g++'s.
+//
 // TODO: These benchmarks show that bandwidth limits parallel scaling. Maybe instead of large arrays, small enough arrays need to be used that fit in cache, using algorithms repeatedly within cache
 //       to show parallel scaling when higher bandwidth is available. This would be a good demonstration of parallel scaling of each algorithm with higher bandwidth availability.
 // TODO: Demonstrate a nice cache effect on performance, where a small array of 1,000,000 elements which fits into cache, first time run is much slower than the rest of runs, with different
@@ -34,13 +35,6 @@
 
 #include <immintrin.h>
 
-//#include <sycl/sycl.hpp>
-
-//#include "FillParallel.h"
-//#include "BinarySearch.h"
-//#include "ParallelMerge.h"
-
-//using namespace sycl;
 using namespace std;
 using std::chrono::duration;
 using std::chrono::duration_cast;
