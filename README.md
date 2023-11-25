@@ -11,7 +11,7 @@ To install g++ which supports C++17:
 sudo apt install build-essential
 ```
 
-To update gcc to support c++17 standard:
+To update gcc to support c++17 standard, which uses Intel's Threading Building Blocks (TBB) for C++ Parallel Standard Algorithms:
 ```
 sudo apt update
 sudo apt install libtbb-dev
