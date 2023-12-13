@@ -8,12 +8,14 @@ To setup Intel's C++ Standard Parallel Algorithms on Linux, the following are ne
 ## Building on Ubuntu 20.04 Linux (or WSL on Windows)
 To install g++ which supports C++17:
 ```
+sudo apt update
+sudo apt upgrade
+# reboot the machine
 sudo apt install build-essential
 ```
 
 To update gcc to support c++17 standard, which uses Intel's Threading Building Blocks (TBB) for C++ Parallel Standard Algorithms:
 ```
-sudo apt update
 sudo apt install libtbb-dev
 ```
 
